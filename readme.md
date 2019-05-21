@@ -2,6 +2,31 @@
 
 A CLI tool for making developer life easy. 
 
+## Build
+
+Change namespace and command name from src/main.rs
+
+Then run 
+
+```
+cargo build --release 
+```
+
+You will find the binary in /target folder
+
+
+## Installation
+
+```
+chmod a+x food
+```
+
+```
+mov food /usr/local/bin
+```
+
+
+
 ## Kubernetes commands 
 
 1. Getting all pods in `food` namepaces
