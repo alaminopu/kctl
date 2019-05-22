@@ -1,6 +1,6 @@
 # kctl
 
-A CLI tool for making kubernetes commands much easier
+A CLI wrapper for making kubernetes commands much easier
 
 ## Build
 
