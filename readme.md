@@ -1,10 +1,18 @@
-# food
+# kctl
 
-A CLI tool for making developer life easy. 
+A CLI tool for making developer life easy. some shortcut command for kubernetes
 
 ## Build
 
-Change namespace and command name from src/main.rs
+Before building the tool, install `rust` and `cargo`
+
+On Linux and macOS systems, this is done as follows:
+
+```
+curl https://sh.rustup.rs -sSf | sh
+```
+
+Change namespace from src/main.rs and set your desired namespace
 
 Then run 
 
@@ -18,73 +26,92 @@ You will find the binary in /target folder
 ## Installation
 
 ```
-chmod a+x food
+chmod a+x kctl
 ```
 
 ```
-mov food /usr/local/bin
+mov kctl /usr/local/bin
 ```
 
 
 
 ## Kubernetes commands 
 
-1. Getting all pods in `food` namepaces
+1. Getting all pods of your defined namespace.
 
     ```
-    food pod
+    kctl pod
     ```
-2. Getting all services in `food` namespaces
+
+    Search specific pods with app name
+
+     ```
+    kctl pod <app-name>
+    ```
+
+2. Getting all services of your defined namespace.
     
     ```
-    food svc 
+    kctl svc 
     ```
 
-3. Getting all deployments in `food` namespaces
+    Search specific service with app name
+
+     ```
+    kctl svc <app-name>
+    ```
+
+3. Getting all deployments of your defined namespace.
 
     ```
-    food deploy 
+    kctl deploy 
+    ```
+
+    Search specific deploy with app name
+
+     ```
+    kctl deploy <app-name>
     ```
 
 
-4. Checking logs of any of the `food` deployment or app
+4. Checking logs of any of the deployment or app of your defined namespace.
 
     ```
-    food logs <app-name>
+    kctl logs <app-name>
     ```
 
     Example: 
 
     ```
-    food logs search
+    kctl logs search
     ```
 
-5. Port forward any of the `food` deployment or app
+5. Port forward any of the deployment or app of your defined namespace.
 
     ```
-    food forward <app-name> <port-number>
+    kctl forward <app-name> <port-number>
     ```
 
     Example: 
 
     ```
-    food forward search 8030
+    kctl forward search 8030
     ```
 
     or 
 
     ```
-    food forward search 8030:8030
+    kctl forward search 8030:8030
     ```
 
-6. Exec to any pod of the `food` deployment or app. By default it will try to use `bash`.
+6. Exec to any pod of the deployment or app of your defined namespace. By default it will try to use `bash`.
 
      ```
-    food exec <app-name>
+    kctl exec <app-name>
     ```
 
     Example: 
 
     ```
-    food exec search
+    kctl exec search
     ```

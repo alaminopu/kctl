@@ -8,10 +8,10 @@ use std::io::Write;
 fn main() {
     let namespace = "food";
 
-    let matches = App::new("food")
+    let matches = App::new("kctl")
         .version("0.1.0")
         .author("Md. Al-Amin <alaminopu.me@gmail.com>")
-        .about("Kubernetes CLI tool for food team")
+        .about("Kubernetes CLI tool for making things more easy")
         .arg(Arg::with_name("command")
             .help("Input command you want to run!")
             .index(1)
