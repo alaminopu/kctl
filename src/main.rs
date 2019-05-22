@@ -11,7 +11,7 @@ fn main() {
     let matches = App::new("kctl")
         .version("0.1.0")
         .author("Md. Al-Amin <alaminopu.me@gmail.com>")
-        .about("Kubernetes CLI tool for making things more easy")
+        .about("Kubernetes CLI wrapper for making things easier!")
         .arg(Arg::with_name("command")
             .help("Input command you want to run!")
             .index(1)
@@ -25,7 +25,7 @@ fn main() {
             .takes_value(true))
         .get_matches();
     
-    // Note, it's safe to call unwrap() because the arg is required
+    // NOTE: it's safe to call unwrap() because the arg is required
     match matches.value_of("command").unwrap() {
         "pod" => {
             if matches.is_present("app"){
