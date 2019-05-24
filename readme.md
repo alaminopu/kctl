@@ -121,3 +121,7 @@ mov kctl /usr/local/bin
     ```
     kctl exec search
     ```
+
+## Arguments
+1. Namespace  
+    Default namespace is "default". Change it by specifying optional argument -n or --namespace

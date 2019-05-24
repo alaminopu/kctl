@@ -4,9 +4,7 @@ use clap::{Arg, App};
 use std::process::{Command, Stdio};
 use std::io::Write;
 
-
 fn main() {
-    let namespace = "food";
 
     let matches = App::new("kctl")
         .version("0.1.0")
@@ -23,8 +21,17 @@ fn main() {
         .arg(Arg::with_name("port")
             .help("Get port number for port forwarding")
             .takes_value(true))
+        .arg(Arg::with_name("namespace")
+            .help("Specify the namespace to work on")
+            .takes_value(true)
+            .required(false)
+            .short("n")
+            .long("namespace")
+            .default_value("default")
+            .long("namespace"))
         .get_matches();
     
+    let namespace = matches.value_of("namespace").unwrap();
     // NOTE: it's safe to call unwrap() because the arg is required
     match matches.value_of("command").unwrap() {
         "pod" => {
