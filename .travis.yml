@@ -1,0 +1,34 @@
+language: rust
+rust:
+  - stable
+env:
+  global:
+    - PROJECT_NAME=kctl
+matrix:
+  fast_finish: true
+  include:
+  - os: linux
+    rust: stable
+    env: TARGET=x86_64-linux
+  - os: osx
+    rust: stable
+    env: TARGET=x86_64-darwin
+script:
+  - cargo build --verbose --all
+  - cargo test --verbose --all
+before_deploy:
+  - cargo build --release
+  - mv ./target/release/kctl ./
+  - tar cvfz $PROJECT_NAME-$TRAVIS_TAG-$TARGET.tar.gz ./kctl
+  - PREVIOUS_TAG=$(git tag | tail -2 | head -1)
+  - echo 'Changelog:'
+  - git log ${PREVIOUS_TAG}..${TRAVIS_TAG} --oneline
+  - export GITHUB_RELEASE_NAME="v${TRAVIS_TAG}"
+deploy:
+  provider: releases
+  api_key:
+    secure: Q/qx9BsLxYjKtf60S8dnHWDn4Y8sHtc3/6tqDuV5UBk+AN1rm2Gdj7xZRyN18h3FBizlm8BzumXp0IU9Xt1sUF5NKk4IMC71Ck+duChaihlfr0l3aL9zBTC1AU5x6hWI0SZ3SHEacY0KJuNSWAurRWflR3EmmJ8gjP7hyBpNz/Xd5dFVlhF5xXhyGLJOYPD3MTyovGHhApe28O8+Wm5tcmKsSZgkDVwLrt/+xkQ17pYovc95zHYsmflsTssrbSL2cOe8+GTBOEURwBMLvJDBIXREbDVKd3JfD7H777ewSDvROq3HlJlF5jw0mORNlPvrOldMoxdG9Uwa5D6hNiri6hynd1QhmEwz7hz9R3AxmUALtEDnqmOXVgpmiMJKDakGM64zM299Y0JXfN1E/y6KIw87EEepnXG5m2cGU4+0imnYw0u2wUwPlYsXTYp0e+RY0rB3R/x84+WMpnvbv+K6QKBhyhATBixcx5XWg+aEeNLCjnnnWKYtWpmdLBLswRNOoyq9JsMPmbzX0589bBvZAJwYTKtLJIQy40NPVX1BVUoHiZJqZSpv589NTffiq0izpHkpsJ5sn6zCf3EGUZ4Wx8XPVSu+LE9rRL90IUINRl3T6FlU+bpP7UnotywYbbGsGgYHLQgYJ/Yv1RcZ8XE0ZvenAkr1oRSFur2KUjpnBwc=
+  file: '$PROJECT_NAME-$TRAVIS_TAG-$TARGET.tar.gz'
+  skip_cleanup: true
+  on:
+    tags: true
