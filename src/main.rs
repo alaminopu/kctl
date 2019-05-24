@@ -188,7 +188,7 @@ fn main() {
                         .status()
                         .expect("Failed show logs");
                 }else {
-                    println!("Invalid app name?");
+                    println!("Invalid app name or namespace?");
                 }
                 
             }else {
@@ -239,7 +239,7 @@ fn main() {
                         .status()
                         .expect("Failed exec to pod");
                 }else {
-                    println!("Invalid app name?");
+                    println!("Invalid app name or namespace?");
                 }
                 
                 
@@ -296,7 +296,7 @@ fn main() {
                         println!("Missing port number");
                     }
                 }else {
-                    println!("Invalid app name?");
+                    println!("Invalid app name or namespace?");
                 }
                 
                 
