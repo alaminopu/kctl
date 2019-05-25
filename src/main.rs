@@ -4,6 +4,8 @@ use clap::{Arg, App};
 use std::process::{Command, Stdio};
 use std::io::Write;
 
+mod config;
+
 fn main() {
 
     let matches = App::new("kctl")
@@ -13,7 +15,7 @@ fn main() {
         .arg(Arg::with_name("command")
             .help("Input command you want to run!")
             .index(1)
-            .possible_values(&["pod", "svc", "deploy", "log", "exec", "forward"])
+            .possible_values(&["pod", "svc", "deploy", "log", "exec", "forward", "set-namespace"])
             .required(true))
         .arg(Arg::with_name("app")
             .help("Get specific app pods")
@@ -27,13 +29,27 @@ fn main() {
             .required(false)
             .short("n")
             .long("namespace")
-            .default_value("default")
-            .long("namespace"))
+            .default_value("default"))
         .get_matches();
     
-    let namespace = matches.value_of("namespace").unwrap();
+    let namespace_from_config = config::get();
+    let mut namespace = matches.value_of("namespace").unwrap();
+    // check if -n was passed by user 
+    let is_namespace_passed: bool = if matches.occurrences_of("namespace") == 0 { false } else { true };
+    if !namespace_from_config.is_empty() && !is_namespace_passed{
+        namespace = &namespace_from_config;
+    }
+    
     // NOTE: it's safe to call unwrap() because the arg is required
     match matches.value_of("command").unwrap() {
+        "set-namespace" => {
+            if is_namespace_passed {
+                use self::config::set;
+                set("KCTL_NAMESPACE", namespace);
+            }else {
+                println!("use -n <namespace> to set a namespace!");
+            }
+        },
         "pod" => {
             if matches.is_present("app"){
                 let app = matches.value_of("app").unwrap();
