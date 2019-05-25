@@ -29,20 +29,21 @@ fn main() {
             .required(false)
             .short("n")
             .long("namespace")
-            .default_value("default")
-            .long("namespace"))
+            .default_value("default"))
         .get_matches();
     
     let namespace_from_config = config::get();
     let mut namespace = matches.value_of("namespace").unwrap();
-    if !namespace_from_config.is_empty() && namespace == "default" {
-        namespace = &namespace_from_config
+    // check if -n was passed by user 
+    let is_namespace_passed: bool = if matches.occurrences_of("namespace") == 0 { false } else { true };
+    if !namespace_from_config.is_empty() && !is_namespace_passed{
+        namespace = &namespace_from_config;
     }
     
     // NOTE: it's safe to call unwrap() because the arg is required
     match matches.value_of("command").unwrap() {
         "set-namespace" => {
-            if namespace != "default" {
+            if is_namespace_passed {
                 use self::config::set;
                 set("KCTL_NAMESPACE", namespace);
             }else {
