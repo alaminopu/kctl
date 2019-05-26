@@ -5,9 +5,12 @@ use std::process::{Command, Stdio};
 use std::io::Write;
 
 mod config;
+mod args;
+
+use crate::args::Args;
+use crate::config::set;
 
 fn main() {
-
     let matches = App::new("kctl")
         .version("0.1.0")
         .author("Md. Al-Amin <alaminopu.me@gmail.com>")
@@ -32,292 +35,286 @@ fn main() {
             .default_value("default"))
         .get_matches();
     
-    let namespace_from_config = config::get();
-    let mut namespace = matches.value_of("namespace").unwrap();
-    // check if -n was passed by user 
-    let is_namespace_passed: bool = if matches.occurrences_of("namespace") == 0 { false } else { true };
-    if !namespace_from_config.is_empty() && !is_namespace_passed{
-        namespace = &namespace_from_config;
-    }
+    let arguments = Args::parse(&matches);
+    let Args {
+        command,
+        app,
+        port,
+        namespace
+    } = arguments;
     
-    // NOTE: it's safe to call unwrap() because the arg is required
-    match matches.value_of("command").unwrap() {
+    match command {
         "set-namespace" => {
-            if is_namespace_passed {
-                use self::config::set;
-                set("KCTL_NAMESPACE", namespace);
-            }else {
-                println!("use -n <namespace> to set a namespace!");
-            }
+            set("KCTL_NAMESPACE", &namespace);
         },
         "pod" => {
-            if matches.is_present("app"){
-                let app = matches.value_of("app").unwrap();
-                
-                let cmd = Command::new("kubectl")
+            match app {
+                None => {
+                    Command::new("kubectl")
                     .arg("get")
                     .arg("pods")
                     .arg("-n")
-                    .arg(namespace)
+                    .arg(&namespace)
+                    .status()
+                    .expect("failed to execute process");
+                },
+                Some(app_name) => {
+                    let cmd = Command::new("kubectl")
+                    .arg("get")
+                    .arg("pods")
+                    .arg("-n")
+                    .arg(&namespace)
                     .stdout(Stdio::piped())
                     .output()
                     .expect("Failed to get pod list");
 
-                let mut child = Command::new("grep")
-                    .arg(app)
-                    .stdin(Stdio::piped())
-                    .stdout(Stdio::piped())
-                    .spawn()
-                    .expect("Failed search with app name");
+                    let mut child = Command::new("grep")
+                        .arg(app_name)
+                        .stdin(Stdio::piped())
+                        .stdout(Stdio::piped())
+                        .spawn()
+                        .expect("Failed search with app name");
 
-                {
-                    let stdin = child.stdin.as_mut().expect("Failed to open stdin");
-                    stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
+                    {
+                        let stdin = child.stdin.as_mut().expect("Failed to open stdin");
+                        stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
+                    }
+                    let output = child.wait_with_output().expect("Failed to read stdout");
+                    print!("{}", String::from_utf8_lossy(&output.stdout));
                 }
-                let output = child.wait_with_output().expect("Failed to read stdout");
-                print!("{}", String::from_utf8_lossy(&output.stdout));
-                
-            }else {
-                Command::new("kubectl")
-                    .arg("get")
-                    .arg("pods")
-                    .arg("-n")
-                    .arg(namespace)
-                    .status()
-                    .expect("failed to execute process");
             }
-           
         },
         "svc" => {
-             if matches.is_present("app"){
-                let app = matches.value_of("app").unwrap();
-                
-                let cmd = Command::new("kubectl")
+            match app {
+                None => {
+                    Command::new("kubectl")
                     .arg("get")
                     .arg("svc")
                     .arg("-n")
-                    .arg(namespace)
+                    .arg(&namespace)
+                    .status()
+                    .expect("failed to execute process");
+                },
+                Some(app_name) => {
+                    let cmd = Command::new("kubectl")
+                    .arg("get")
+                    .arg("svc")
+                    .arg("-n")
+                    .arg(&namespace)
                     .stdout(Stdio::piped())
                     .output()
                     .expect("Failed to get pod list");
 
-                let mut child = Command::new("grep")
-                    .arg(app)
-                    .stdin(Stdio::piped())
-                    .stdout(Stdio::piped())
-                    .spawn()
-                    .expect("Failed search with app name");
+                    let mut child = Command::new("grep")
+                        .arg(app_name)
+                        .stdin(Stdio::piped())
+                        .stdout(Stdio::piped())
+                        .spawn()
+                        .expect("Failed search with app name");
 
-                {
-                    let stdin = child.stdin.as_mut().expect("Failed to open stdin");
-                    stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
+                    {
+                        let stdin = child.stdin.as_mut().expect("Failed to open stdin");
+                        stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
+                    }
+                    let output = child.wait_with_output().expect("Failed to read stdout");
+                    print!("{}", String::from_utf8_lossy(&output.stdout));
+
                 }
-                let output = child.wait_with_output().expect("Failed to read stdout");
-                print!("{}", String::from_utf8_lossy(&output.stdout));
-                
-            }else {
-
-                Command::new("kubectl")
-                    .arg("get")
-                    .arg("svc")
-                    .arg("-n")
-                    .arg(namespace)
-                    .status()
-                    .expect("failed to execute process");
             }
         },
         "deploy" => {
-            if matches.is_present("app"){
-                let app = matches.value_of("app").unwrap();
-                
-                let cmd = Command::new("kubectl")
+            match app {
+                None => {
+                    Command::new("kubectl")
                     .arg("get")
                     .arg("deployment")
                     .arg("-n")
-                    .arg(namespace)
+                    .arg(&namespace)
+                    .status()
+                    .expect("failed to execute process");
+                },
+                Some(app_name) => {
+                    let cmd = Command::new("kubectl")
+                    .arg("get")
+                    .arg("deployment")
+                    .arg("-n")
+                    .arg(&namespace)
                     .stdout(Stdio::piped())
                     .output()
                     .expect("Failed to get pod list");
 
-                let mut child = Command::new("grep")
-                    .arg(app)
-                    .stdin(Stdio::piped())
-                    .stdout(Stdio::piped())
-                    .spawn()
-                    .expect("Failed search with app name");
+                    let mut child = Command::new("grep")
+                        .arg(app_name)
+                        .stdin(Stdio::piped())
+                        .stdout(Stdio::piped())
+                        .spawn()
+                        .expect("Failed search with app name");
 
-                {
-                    let stdin = child.stdin.as_mut().expect("Failed to open stdin");
-                    stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
+                    {
+                        let stdin = child.stdin.as_mut().expect("Failed to open stdin");
+                        stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
+                    }
+                    let output = child.wait_with_output().expect("Failed to read stdout");
+                    print!("{}", String::from_utf8_lossy(&output.stdout));
+
                 }
-                let output = child.wait_with_output().expect("Failed to read stdout");
-                print!("{}", String::from_utf8_lossy(&output.stdout));
-                
-            }else {
-                Command::new("kubectl")
-                    .arg("get")
-                    .arg("deployment")
-                    .arg("-n")
-                    .arg(namespace)
-                    .status()
-                    .expect("failed to execute process");
             }
         },
         "log" => {
-            if matches.is_present("app"){
-                let app = matches.value_of("app").unwrap();
-                
-                let cmd = Command::new("kubectl")
+            match app {
+                None => {
+                    println!("Missing app name!");
+                },
+                Some(app_name) => {
+                    let cmd = Command::new("kubectl")
                     .arg("get")
                     .arg("pods")
                     .arg("-n")
-                    .arg(namespace)
+                    .arg(&namespace)
                     .arg("-o=name")
                     .stdout(Stdio::piped())
                     .output()
                     .expect("Failed to get pod list");
 
-                let mut child = Command::new("grep")
-                    .arg(app)
-                    .stdin(Stdio::piped())
-                    .stdout(Stdio::piped())
-                    .spawn()
-                    .expect("Failed search with app name");
+                    let mut child = Command::new("grep")
+                        .arg(app_name)
+                        .stdin(Stdio::piped())
+                        .stdout(Stdio::piped())
+                        .spawn()
+                        .expect("Failed search with app name");
 
-                {
-                    let stdin = child.stdin.as_mut().expect("Failed to open stdin");
-                    stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
-                }
-                let output = child.wait_with_output().expect("Failed to read stdout");
+                    {
+                        let stdin = child.stdin.as_mut().expect("Failed to open stdin");
+                        stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
+                    }
+                    let output = child.wait_with_output().expect("Failed to read stdout");
 
-                let x = String::from_utf8_lossy(&output.stdout);
-                let v: Vec<&str> = x.split_whitespace().collect();
+                    let x = String::from_utf8_lossy(&output.stdout);
+                    let v: Vec<&str> = x.split_whitespace().collect();
 
-                if v.len() > 0 {
-                    // Running logs 
-                    Command::new("kubectl")
-                        .arg("logs")
-                        .arg("-f")
-                        .arg(v[0])
-                        .arg("-n")
-                        .arg(namespace)
-                        .status()
-                        .expect("Failed show logs");
-                }else {
-                    println!("Invalid app name or namespace?");
-                }
-                
-            }else {
-                println!("Missing app name!");
-            }
-        },
-        "exec" => {
-            if matches.is_present("app"){
-                let app = matches.value_of("app").unwrap();
-                
-                let cmd = Command::new("kubectl")
-                    .arg("get")
-                    .arg("pods")
-                    .arg("-n")
-                    .arg(namespace)
-                    .arg("--no-headers")
-                    .arg("-o")
-                    .arg("custom-columns=:metadata.name")
-                    .stdout(Stdio::piped())
-                    .output()
-                    .expect("Failed to get pod list");
-
-                let mut child = Command::new("grep")
-                    .arg(app)
-                    .stdin(Stdio::piped())
-                    .stdout(Stdio::piped())
-                    .spawn()
-                    .expect("Failed search with app name");
-
-                {
-                    let stdin = child.stdin.as_mut().expect("Failed to open stdin");
-                    stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
-                }
-                let output = child.wait_with_output().expect("Failed to read stdout");
-
-                let x = String::from_utf8_lossy(&output.stdout);
-                let v: Vec<&str> = x.split_whitespace().collect();
-                
-                if v.len() > 0 {
-                    // exec
-                    Command::new("kubectl")
-                        .arg("exec")
-                        .arg("-it")
-                        .arg(v[0])
-                        .arg("-n")
-                        .arg(namespace)
-                        .arg("bash")
-                        .status()
-                        .expect("Failed exec to pod");
-                }else {
-                    println!("Invalid app name or namespace?");
-                }
-                
-                
-            }else {
-                println!("Missing app name!");
-            }
-        },
-        "forward" => {
-            if matches.is_present("app"){
-                let app = matches.value_of("app").unwrap();
-                
-                let cmd = Command::new("kubectl")
-                    .arg("get")
-                    .arg("pods")
-                    .arg("-n")
-                    .arg(namespace)
-                    .arg("--no-headers")
-                    .arg("-o")
-                    .arg("custom-columns=:metadata.name")
-                    .stdout(Stdio::piped())
-                    .output()
-                    .expect("Failed to get pod list");
-
-                let mut child = Command::new("grep")
-                    .arg(app)
-                    .stdin(Stdio::piped())
-                    .stdout(Stdio::piped())
-                    .spawn()
-                    .expect("Failed search with app name");
-
-                {
-                    let stdin = child.stdin.as_mut().expect("Failed to open stdin");
-                    stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
-                }
-                let output = child.wait_with_output().expect("Failed to read stdout");
-
-                let x = String::from_utf8_lossy(&output.stdout);
-                let v: Vec<&str> = x.split_whitespace().collect();
-                
-                if v.len() > 0 {
-                    if matches.is_present("port"){
-                        let port = matches.value_of("port").unwrap();
-
-                        // exec
+                    if v.len() > 0 {
+                        // Running logs 
                         Command::new("kubectl")
-                            .arg("port-forward")
+                            .arg("logs")
+                            .arg("-f")
                             .arg(v[0])
-                            .arg(port)
                             .arg("-n")
                             .arg(namespace)
                             .status()
-                            .expect("Failed port-forward");
+                            .expect("Failed show logs");
                     }else {
-                        println!("Missing port number");
+                        println!("Invalid app name or namespace?");
                     }
-                }else {
-                    println!("Invalid app name or namespace?");
+                    }
+            }
+        },
+        "exec" => {
+            match app {
+                None => {
+                    println!("Missing app name!");
+                },
+                Some(app_name) => {
+                    let cmd = Command::new("kubectl")
+                    .arg("get")
+                    .arg("pods")
+                    .arg("-n")
+                    .arg(&namespace)
+                    .arg("--no-headers")
+                    .arg("-o")
+                    .arg("custom-columns=:metadata.name")
+                    .stdout(Stdio::piped())
+                    .output()
+                    .expect("Failed to get pod list");
+
+                    let mut child = Command::new("grep")
+                        .arg(app_name)
+                        .stdin(Stdio::piped())
+                        .stdout(Stdio::piped())
+                        .spawn()
+                        .expect("Failed search with app name");
+
+                    {
+                        let stdin = child.stdin.as_mut().expect("Failed to open stdin");
+                        stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
+                    }
+                    let output = child.wait_with_output().expect("Failed to read stdout");
+
+                    let x = String::from_utf8_lossy(&output.stdout);
+                    let v: Vec<&str> = x.split_whitespace().collect();
+                    
+                    if v.len() > 0 {
+                        // exec
+                        Command::new("kubectl")
+                            .arg("exec")
+                            .arg("-it")
+                            .arg(v[0])
+                            .arg("-n")
+                            .arg(namespace)
+                            .arg("bash")
+                            .status()
+                            .expect("Failed exec to pod");
+                    }else {
+                        println!("Invalid app name or namespace?");
+                    }
+                    
                 }
-                
-                
-            }else {
-                println!("Missing app name!");
+            }
+        },
+        "forward" => {
+            match app {
+                None => {
+                    println!("Missing app name!");
+                },
+                Some(app_name) => {
+                    let cmd = Command::new("kubectl")
+                    .arg("get")
+                    .arg("pods")
+                    .arg("-n")
+                    .arg(&namespace)
+                    .arg("--no-headers")
+                    .arg("-o")
+                    .arg("custom-columns=:metadata.name")
+                    .stdout(Stdio::piped())
+                    .output()
+                    .expect("Failed to get pod list");
+
+                    let mut child = Command::new("grep")
+                        .arg(app_name)
+                        .stdin(Stdio::piped())
+                        .stdout(Stdio::piped())
+                        .spawn()
+                        .expect("Failed search with app name");
+
+                    {
+                        let stdin = child.stdin.as_mut().expect("Failed to open stdin");
+                        stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
+                    }
+                    let output = child.wait_with_output().expect("Failed to read stdout");
+
+                    let x = String::from_utf8_lossy(&output.stdout);
+                    let v: Vec<&str> = x.split_whitespace().collect();
+                    
+                    if v.len() > 0 {
+                        match port {
+                            None => {
+                                println!("Missing port number");
+                            },
+                            Some(port_number) => {
+                                // exec
+                                Command::new("kubectl")
+                                    .arg("port-forward")
+                                    .arg(v[0])
+                                    .arg(port_number)
+                                    .arg("-n")
+                                    .arg(namespace)
+                                    .status()
+                                    .expect("Failed port-forward");
+                            }
+                        }
+                    }else {
+                        println!("Invalid app name or namespace?");
+                    }
+                }
             }
         },
         _      => unreachable!()
