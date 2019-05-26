@@ -35,24 +35,6 @@ brew install kctl
 
 **Manual**
 
-Run
-
-```
-cargo build --release 
-```
-
-You will find the binary in /target folder
-
-```
-chmod a+x kctl
-```
-
-```
-mov kctl /usr/local/bin
-```
-
-## Build
-
 Before building the tool, install `rust` and `cargo`
 
 On Linux and macOS systems, this is done as follows:
@@ -61,10 +43,30 @@ On Linux and macOS systems, this is done as follows:
 curl https://sh.rustup.rs -sSf | sh
 ```
 
+Then run
+
+```
+cargo build --release 
+```
+
+You will find the binary in /target folder
+
+Update permission 
+
+```
+chmod a+x kctl
+```
+
+Move the binary to `/usr/local/bin` to make it executable from any terminal window 
+
+```
+mov kctl /usr/local/bin
+```
+
 
 ## Contributing
 - Fork the repo
-- Create an issue from in the issue section
+- Create an issue in the issue section
 - Write code and commit changes 
 - Send an PR to the master branch 
 
