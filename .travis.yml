@@ -1,9 +1,9 @@
 language: rust
 rust:
-  - stable
+- stable
 env:
   global:
-    - PROJECT_NAME=kctl
+  - PROJECT_NAME=kctl
 matrix:
   fast_finish: true
   include:
@@ -27,8 +27,9 @@ before_deploy:
 deploy:
   provider: releases
   api_key:
-    secure: Q/qx9BsLxYjKtf60S8dnHWDn4Y8sHtc3/6tqDuV5UBk+AN1rm2Gdj7xZRyN18h3FBizlm8BzumXp0IU9Xt1sUF5NKk4IMC71Ck+duChaihlfr0l3aL9zBTC1AU5x6hWI0SZ3SHEacY0KJuNSWAurRWflR3EmmJ8gjP7hyBpNz/Xd5dFVlhF5xXhyGLJOYPD3MTyovGHhApe28O8+Wm5tcmKsSZgkDVwLrt/+xkQ17pYovc95zHYsmflsTssrbSL2cOe8+GTBOEURwBMLvJDBIXREbDVKd3JfD7H777ewSDvROq3HlJlF5jw0mORNlPvrOldMoxdG9Uwa5D6hNiri6hynd1QhmEwz7hz9R3AxmUALtEDnqmOXVgpmiMJKDakGM64zM299Y0JXfN1E/y6KIw87EEepnXG5m2cGU4+0imnYw0u2wUwPlYsXTYp0e+RY0rB3R/x84+WMpnvbv+K6QKBhyhATBixcx5XWg+aEeNLCjnnnWKYtWpmdLBLswRNOoyq9JsMPmbzX0589bBvZAJwYTKtLJIQy40NPVX1BVUoHiZJqZSpv589NTffiq0izpHkpsJ5sn6zCf3EGUZ4Wx8XPVSu+LE9rRL90IUINRl3T6FlU+bpP7UnotywYbbGsGgYHLQgYJ/Yv1RcZ8XE0ZvenAkr1oRSFur2KUjpnBwc=
+    secure: DEpQ6NENrFp6YjUFhIRiwBzmNd9DsYPfwELtk2K7EQMfyO8Kqs2Vfqo6zJiAUjhy23cnVHasRrc3Vbu1SWONjGo2R6KOYXbO7FKZtzpa816+GbduPQ4mFS2isoNaPBnyWjpbNovQZmzxGgS2KXU33BxhWAym5mpQMw8WITme0H0uP2eKKT4vvdqnqFSP5eNIMqh7k68lCg/ljSterOXNbgo9HsL9KbGFOiueMGpv4U1IfGVPtFkP4JtwV44yfBW7/5OyICSvwMcGiQ5NuuaUWtvOQS47PEpSCbw+6cuo+7hbd9ZKDjyQBeNbZu+TeZRa0/7AZ83DGlHgFp/eDa3PhoppUGMky0movYynOZi0/IHRRDAmhVTiVzX2u/SdmiYFXDjrDL1PQr4x0AvHXejZOjcclVJJ69PikebNDRG93KAwVzcklJhRTyFU2iazyAp7zpRejVYJydroyFT4nmVgMHNn2smxhomTb+buaB/m7ctj09+XiD+tIl1N+TWiGsMzOtq7ipkPgjIz8NnGmoEsK+XISBnbmpPRYAfdwPxe/+QbyltWUtlhPRkNZ+NCzKFIX6vPBI0hvjDP9kb1q0di7d9O6pvOleX11JOYs3Z8UXXPCkLR4di9d4sbJRbsb7TD2LUPUUYZWA0IMAAnb2XQFDJk9OzzMwBD7HmAj1JoMeA=
   file: '$PROJECT_NAME-$TRAVIS_TAG-$TARGET.tar.gz'
   skip_cleanup: true
   on:
+    repo: alaminopu/kctl
     tags: true
