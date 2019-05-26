@@ -25,6 +25,9 @@ ARGS:
     <port>       Get port number for port forwarding
 ```
 
+## Demo
+![demo](demo.gif)
+
 [Usage Docs](https://github.com/alaminopu/kctl/wiki)  
 
 ## Installation
