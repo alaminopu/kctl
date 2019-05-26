@@ -12,7 +12,7 @@ use crate::config::set;
 
 fn main() {
     let matches = App::new("kctl")
-        .version("0.1.0")
+        .version("0.2.1")
         .author("Md. Al-Amin <alaminopu.me@gmail.com>")
         .about("Kubernetes CLI wrapper for making things easier!")
         .arg(Arg::with_name("command")
