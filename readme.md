@@ -2,17 +2,28 @@
 
 A CLI wrapper for making kubernetes commands much easier
 
-## Build
-
-Before building the tool, install `rust` and `cargo`
-
-On Linux and macOS systems, this is done as follows:
+## Usage
 
 ```
-curl https://sh.rustup.rs -sSf | sh
+$ kctl --help
+USAGE:
+    kctl [OPTIONS] <command> [ARGS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -n, --namespace <namespace>    Specify the namespace to work on [default: default]
+
+ARGS:
+    <command>    Input command you want to run! [possible values: pod, svc, deploy, log, exec, forward, set-
+                 namespace]
+    <app>        Get specific app pods
+    <port>       Get port number for port forwarding
 ```
 
-
+[Usage Docs](https://github.com/alaminopu/kctl/wiki)  
 
 ## Installation
 
@@ -40,109 +51,15 @@ chmod a+x kctl
 mov kctl /usr/local/bin
 ```
 
+## Build
 
+Before building the tool, install `rust` and `cargo`
 
-## Kubernetes commands 
-1. Set a default namespace 
+On Linux and macOS systems, this is done as follows:
 
-     ```
-    kctl set-namespace -n <namespace>
-    ```
-
-    Example:
-
-     ```
-    kctl set-namespace -n food
-    ```
-
-2. Getting all pods of your defined namespace.
-
-    ```
-    kctl pod
-    ```
-
-    Search specific pods with app name
-
-     ```
-    kctl pod <app-name>
-    ```
-
-3. Getting all services of your defined namespace.
-    
-    ```
-    kctl svc 
-    ```
-
-    Search specific service with app name
-
-     ```
-    kctl svc <app-name>
-    ```
-
-4. Getting all deployments of your defined namespace.
-
-    ```
-    kctl deploy 
-    ```
-
-    Search specific deploy with app name
-
-     ```
-    kctl deploy <app-name>
-    ```
-
-
-5. Checking logs of any of the deployment or app of your defined namespace.
-
-    ```
-    kctl logs <app-name>
-    ```
-
-    Example: 
-
-    ```
-    kctl logs search
-    ```
-
-6. Port forward any of the deployment or app of your defined namespace.
-
-    ```
-    kctl forward <app-name> <port-number>
-    ```
-
-    Example: 
-
-    ```
-    kctl forward search 8030
-    ```
-
-    or 
-
-    ```
-    kctl forward search 8030:8030
-    ```
-
-7. Exec to any pod of the deployment or app of your defined namespace. By default it will try to use `bash`.
-
-     ```
-    kctl exec <app-name>
-    ```
-
-    Example: 
-
-    ```
-    kctl exec search
-    ```
-
-## Arguments
-1. Namespace  
-    Default namespace is "default". Change it by specifying optional argument -n or --namespace
-
-    Example: 
-
-    ```
-    kctl pod -n resto
-    ```
+```
+curl https://sh.rustup.rs -sSf | sh
+```
 
 
 ## Contributing
