@@ -27,3 +27,44 @@ impl<'a> Args<'a> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use clap::{Arg, App};
+    
+    #[test]
+    fn test_parse() {
+        let  app = App::new("kctl")
+        .version("0.1.0")
+        .author("Md. Al-Amin <alaminopu.me@gmail.com>")
+        .about("Kubernetes CLI wrapper for making things easier!")
+        .arg(Arg::with_name("command")
+            .help("Input command you want to run!")
+            .index(1)
+            .possible_values(&["pod", "svc", "deploy", "log", "exec", "forward", "set-namespace"])
+            .required(true))
+        .arg(Arg::with_name("app")
+            .help("Get specific app pods")
+            .takes_value(true))
+        .arg(Arg::with_name("port")
+            .help("Get port number for port forwarding")
+            .takes_value(true))
+        .arg(Arg::with_name("namespace")
+            .help("Specify the namespace to work on")
+            .takes_value(true)
+            .required(false)
+            .short("n")
+            .long("namespace")
+            .default_value("default"));
+
+         let matches = app.get_matches_from(vec!["kctl", "pod", "food", "-n", "kube-system"]);
+
+         let arguments = Args::parse(&matches);
+         assert_eq!(arguments.command, "pod");
+         assert_eq!(arguments.port, None);
+         assert_eq!(arguments.app, Some("food"));
+         assert_eq!(arguments.namespace, "kube-system");
+
+    }
+}
