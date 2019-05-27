@@ -1,4 +1,5 @@
 extern crate clap;
+extern crate exitcode;
 
 use clap::{Arg, App};
 use std::process::{Command, Stdio};
@@ -164,6 +165,7 @@ fn main() {
             match app {
                 None => {
                     println!("Missing app name!");
+                    std::process::exit(exitcode::USAGE);
                 },
                 Some(app_name) => {
                     let cmd = Command::new("kubectl")
@@ -212,6 +214,7 @@ fn main() {
             match app {
                 None => {
                     println!("Missing app name!");
+                    std::process::exit(exitcode::USAGE);
                 },
                 Some(app_name) => {
                     let cmd = Command::new("kubectl")
@@ -264,6 +267,7 @@ fn main() {
             match app {
                 None => {
                     println!("Missing app name!");
+                    std::process::exit(exitcode::USAGE);
                 },
                 Some(app_name) => {
                     let cmd = Command::new("kubectl")
@@ -298,6 +302,7 @@ fn main() {
                         match port {
                             None => {
                                 println!("Missing port number");
+                                std::process::exit(exitcode::USAGE);
                             },
                             Some(port_number) => {
                                 // exec

@@ -23,7 +23,7 @@ mod integration {
             .unwrap()
             .args(&["log"])
             .assert()
-            .success()
+            .failure()
             .stdout("Missing app name!\n");
     }
 
@@ -34,7 +34,7 @@ mod integration {
             .unwrap()
             .args(&["exec"])
             .assert()
-            .success()
+            .failure()
             .stdout("Missing app name!\n");
     }
 
@@ -45,7 +45,7 @@ mod integration {
             .unwrap()
             .args(&["forward"])
             .assert()
-            .success()
+            .failure()
             .stdout("Missing app name!\n");
     }
 }
