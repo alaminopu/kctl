@@ -5,7 +5,7 @@ authors = ["Md. Al-Amin <alamin.opu10@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-clap = "2.30.0"
+clap = "4.5"
 dirs = "5.0.1"
 assert_cmd = "2.0.14"
 exitcode = "1.1.2"
