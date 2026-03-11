@@ -52,7 +52,11 @@ pub fn get() -> String {
     let mut s = String::new();
     file.read_to_string(&mut s).expect("Couldn't read value from config!");
     let val: Vec<&str> = s.split("=").collect();
-    String::from(val[1])
+    if val.len() >= 2 {
+        String::from(val[1])
+    } else {
+        String::new()
+    }
 }
 
 

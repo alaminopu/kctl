@@ -8,13 +8,15 @@ use crate::args::Args;
 
 fn main() {
     let matches = ClapCommand::new("kctl")
-        .version("0.2.1")
+        .version("1.0.0")
         .author("Md. Al-Amin <alaminopu.me@gmail.com>")
         .about("Kubernetes CLI wrapper for making things easier!")
         .arg(Arg::new("command")
             .help("Input command you want to run!")
             .index(1)
-            .value_parser(["pod", "svc", "deploy", "log", "exec", "forward", "set-namespace"])
+            .value_parser(["pod", "svc", "deploy", "log", "exec", "forward", "set-namespace",
+                           "describe", "delete", "restart", "ctx", "top", "events",
+                           "ing", "cm", "secret", "scale"])
             .required(true))
         .arg(Arg::new("app")
             .help("Get specific app pods")
@@ -42,13 +44,27 @@ fn main() {
     } = arguments;
 
     match command {
-        "set-namespace" => commands::set_namespace::execute(&namespace),
+        "set-namespace" => {
+            // set-namespace uses the raw clap value, not the config-overridden one
+            let raw_ns = matches.get_one::<String>("namespace").map(|s| s.as_str()).unwrap();
+            commands::set_namespace::execute(raw_ns);
+        },
         "pod"          => commands::pod::execute(app, &namespace),
         "svc"          => commands::svc::execute(app, &namespace),
         "deploy"       => commands::deploy::execute(app, &namespace),
         "log"          => commands::log::execute(app, &namespace),
         "exec"         => commands::exec::execute(app, &namespace),
         "forward"      => commands::forward::execute(app, port, &namespace),
+        "describe"     => commands::describe::execute(app, &namespace),
+        "delete"       => commands::delete::execute(app, &namespace),
+        "restart"      => commands::restart::execute(app, &namespace),
+        "ctx"          => commands::context::execute(app),
+        "top"          => commands::top::execute(app, &namespace),
+        "events"       => commands::events::execute(app, &namespace),
+        "ing"          => commands::ingress::execute(app, &namespace),
+        "cm"           => commands::configmap::execute(app, &namespace),
+        "secret"       => commands::secret::execute(app, &namespace),
+        "scale"        => commands::scale::execute(app, port, &namespace),
         _              => unreachable!()
     }
 }

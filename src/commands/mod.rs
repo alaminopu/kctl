@@ -1,3 +1,4 @@
+pub mod kubectl;
 pub mod pod;
 pub mod svc;
 pub mod deploy;
@@ -5,3 +6,13 @@ pub mod log;
 pub mod exec;
 pub mod forward;
 pub mod set_namespace;
+pub mod describe;
+pub mod delete;
+pub mod restart;
+pub mod context;
+pub mod top;
+pub mod events;
+pub mod ingress;
+pub mod configmap;
+pub mod secret;
+pub mod scale;
