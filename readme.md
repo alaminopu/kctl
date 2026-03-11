@@ -1,7 +1,5 @@
 # kctl
 
-[![Build Status](https://travis-ci.com/alaminopu/kctl.svg?branch=master)](https://travis-ci.com/alaminopu/kctl)
-
 A CLI wrapper for making kubernetes commands much easier
 
 ## Usage
