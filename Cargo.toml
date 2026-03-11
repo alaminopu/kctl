@@ -7,6 +7,8 @@ edition = "2018"
 [dependencies]
 clap = "4.5"
 dirs = "5.0.1"
-assert_cmd = "2.0.14"
 exitcode = "1.1.2"
+
+[dev-dependencies]
+assert_cmd = "2.0.14"
 predicates = "3"

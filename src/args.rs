@@ -13,9 +13,12 @@ impl<'a> Args<'a> {
 
         let mut namespace = matches.get_one::<String>("namespace").map(|s| s.as_str()).unwrap();
 
-        // check if -n was passed by user
-        let is_namespace_passed: bool = matches.contains_id("namespace");
-        if !namespace_from_config.is_empty() && !is_namespace_passed{
+        // check if -n was explicitly passed by user (not just the default)
+        let is_namespace_explicit = matches
+            .value_source("namespace")
+            .map(|s| s == clap::parser::ValueSource::CommandLine)
+            .unwrap_or(false);
+        if !namespace_from_config.is_empty() && !is_namespace_explicit {
             namespace = &namespace_from_config;
         }
 
