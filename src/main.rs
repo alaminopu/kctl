@@ -1,7 +1,7 @@
-extern crate clap;
+// extern crate clap; // No longer needed in 2018 edition for most cases, but specifically we use the new API
 extern crate exitcode;
 
-use clap::{Arg, App};
+use clap::{Arg, Command as ClapCommand};
 use std::process::{Command, Stdio};
 use std::io::Write;
 
@@ -12,26 +12,28 @@ use crate::args::Args;
 use crate::config::set;
 
 fn main() {
-    let matches = App::new("kctl")
+    let matches = ClapCommand::new("kctl")
         .version("0.2.1")
         .author("Md. Al-Amin <alaminopu.me@gmail.com>")
         .about("Kubernetes CLI wrapper for making things easier!")
-        .arg(Arg::with_name("command")
+        .arg(Arg::new("command")
             .help("Input command you want to run!")
             .index(1)
-            .possible_values(&["pod", "svc", "deploy", "log", "exec", "forward", "set-namespace"])
+            .value_parser(["pod", "svc", "deploy", "log", "exec", "forward", "set-namespace"])
             .required(true))
-        .arg(Arg::with_name("app")
+        .arg(Arg::new("app")
             .help("Get specific app pods")
-            .takes_value(true))
-        .arg(Arg::with_name("port")
+            .index(2)
+            .action(clap::ArgAction::Set))
+        .arg(Arg::new("port")
             .help("Get port number for port forwarding")
-            .takes_value(true))
-        .arg(Arg::with_name("namespace")
+            .index(3)
+            .action(clap::ArgAction::Set))
+        .arg(Arg::new("namespace")
             .help("Specify the namespace to work on")
-            .takes_value(true)
+            .action(clap::ArgAction::Set)
             .required(false)
-            .short("n")
+            .short('n')
             .long("namespace")
             .default_value("default"))
         .get_matches();

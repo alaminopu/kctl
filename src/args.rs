@@ -11,18 +11,18 @@ impl<'a> Args<'a> {
     pub fn parse(matches: &'a ArgMatches) -> Args<'a> {
         let namespace_from_config = config::get();
 
-        let mut namespace = matches.value_of("namespace").unwrap();
+        let mut namespace = matches.get_one::<String>("namespace").map(|s| s.as_str()).unwrap();
 
         // check if -n was passed by user
-        let is_namespace_passed: bool = if matches.occurrences_of("namespace") == 0 { false } else { true };
+        let is_namespace_passed: bool = matches.contains_id("namespace");
         if !namespace_from_config.is_empty() && !is_namespace_passed{
             namespace = &namespace_from_config;
         }
 
         Args {
-            command: matches.value_of("command").unwrap(),
-            app: matches.value_of("app"),
-            port: matches.value_of("port"),
+            command: matches.get_one::<String>("command").map(|s| s.as_str()).unwrap(),
+            app: matches.get_one::<String>("app").map(|s| s.as_str()),
+            port: matches.get_one::<String>("port").map(|s| s.as_str()),
             namespace: namespace.to_string(),
         }
     }
@@ -31,30 +31,32 @@ impl<'a> Args<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use clap::{Arg, App};
+    use clap::{Arg, Command};
     
     #[test]
     fn test_parse() {
-        let  app = App::new("kctl")
+        let  app = Command::new("kctl")
         .version("0.2.1")
         .author("Md. Al-Amin <alaminopu.me@gmail.com>")
         .about("Kubernetes CLI wrapper for making things easier!")
-        .arg(Arg::with_name("command")
+        .arg(Arg::new("command")
             .help("Input command you want to run!")
             .index(1)
-            .possible_values(&["pod", "svc", "deploy", "log", "exec", "forward", "set-namespace"])
+            .value_parser(["pod", "svc", "deploy", "log", "exec", "forward", "set-namespace"])
             .required(true))
-        .arg(Arg::with_name("app")
+        .arg(Arg::new("app")
             .help("Get specific app pods")
-            .takes_value(true))
-        .arg(Arg::with_name("port")
+            .index(2)
+            .action(clap::ArgAction::Set))
+        .arg(Arg::new("port")
             .help("Get port number for port forwarding")
-            .takes_value(true))
-        .arg(Arg::with_name("namespace")
+            .index(3)
+            .action(clap::ArgAction::Set))
+        .arg(Arg::new("namespace")
             .help("Specify the namespace to work on")
-            .takes_value(true)
+            .action(clap::ArgAction::Set)
             .required(false)
-            .short("n")
+            .short('n')
             .long("namespace")
             .default_value("default"));
 
