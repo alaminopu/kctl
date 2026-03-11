@@ -14,7 +14,9 @@ fn main() {
         .arg(Arg::new("command")
             .help("Input command you want to run!")
             .index(1)
-            .value_parser(["pod", "svc", "deploy", "log", "exec", "forward", "set-namespace", "describe", "delete", "restart", "ctx"])
+            .value_parser(["pod", "svc", "deploy", "log", "exec", "forward", "set-namespace",
+                           "describe", "delete", "restart", "ctx", "top", "events",
+                           "ing", "cm", "secret", "scale"])
             .required(true))
         .arg(Arg::new("app")
             .help("Get specific app pods")
@@ -57,6 +59,12 @@ fn main() {
         "delete"       => commands::delete::execute(app, &namespace),
         "restart"      => commands::restart::execute(app, &namespace),
         "ctx"          => commands::context::execute(app),
+        "top"          => commands::top::execute(app, &namespace),
+        "events"       => commands::events::execute(app, &namespace),
+        "ing"          => commands::ingress::execute(app, &namespace),
+        "cm"           => commands::configmap::execute(app, &namespace),
+        "secret"       => commands::secret::execute(app, &namespace),
+        "scale"        => commands::scale::execute(app, port, &namespace),
         _              => unreachable!()
     }
 }
