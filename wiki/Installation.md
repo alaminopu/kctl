@@ -44,7 +44,7 @@ mv target/release/kctl /usr/local/bin/
 
 ```bash
 kctl --version
-# kctl 0.2.1
+# kctl 1.0.0
 ```
 
 ## Requirements

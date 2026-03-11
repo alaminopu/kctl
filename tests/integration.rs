@@ -38,7 +38,7 @@ mod integration {
             .args(&["--version"])
             .assert()
             .success()
-            .stdout(predicates::str::contains("0.2.1"));
+            .stdout(predicates::str::contains("1.0.0"));
     }
 
     // ── log command ──────────────────────────────────────────────

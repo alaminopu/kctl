@@ -8,7 +8,7 @@ use crate::args::Args;
 
 fn main() {
     let matches = ClapCommand::new("kctl")
-        .version("0.2.1")
+        .version("1.0.0")
         .author("Md. Al-Amin <alaminopu.me@gmail.com>")
         .about("Kubernetes CLI wrapper for making things easier!")
         .arg(Arg::new("command")
