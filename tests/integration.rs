@@ -10,8 +10,7 @@ mod integration {
     #[test]
     fn calling_root_without_args() {
 
-        Command::cargo_bin("kctl")
-            .unwrap()
+        Command::new(assert_cmd::cargo::cargo_bin!("kctl"))
             .assert()
             .failure();
     }
@@ -19,8 +18,7 @@ mod integration {
     #[test]
     fn calling_log_without_args() {
 
-        Command::cargo_bin("kctl")
-            .unwrap()
+        Command::new(assert_cmd::cargo::cargo_bin!("kctl"))
             .args(&["log"])
             .assert()
             .failure()
@@ -30,8 +28,7 @@ mod integration {
     #[test]
     fn calling_exec_without_args() {
 
-        Command::cargo_bin("kctl")
-            .unwrap()
+        Command::new(assert_cmd::cargo::cargo_bin!("kctl"))
             .args(&["exec"])
             .assert()
             .failure()
@@ -41,8 +38,7 @@ mod integration {
     #[test]
     fn calling_forward_without_args() {
 
-        Command::cargo_bin("kctl")
-            .unwrap()
+        Command::new(assert_cmd::cargo::cargo_bin!("kctl"))
             .args(&["forward"])
             .assert()
             .failure()

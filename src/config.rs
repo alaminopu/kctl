@@ -1,6 +1,5 @@
 extern crate dirs;
 
-use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
@@ -18,7 +17,7 @@ pub fn set(key: &str, value: &str){
 
     // Open a file in write-only mode, returns `io::Result<File>`
     let mut file = match File::create(&path) {
-        Err(why) => panic!("couldn't create {}: {}", display, why.description()),
+        Err(why) => panic!("couldn't create {}: {}", display, why),
         Ok(file) => file,
     };
 
@@ -26,7 +25,7 @@ pub fn set(key: &str, value: &str){
 
     // Write 
     match file.write_all(content.as_bytes()) {
-        Err(why) => panic!("couldn't write to {}: {}", display, why.description()),
+        Err(why) => panic!("couldn't write to {}: {}", display, why),
         Ok(_) => println!("Sucessfully set namespace {}", value),
     }
 }
@@ -45,7 +44,7 @@ pub fn get() -> String {
 
     // Open the path in read-only mode
     let mut file = match File::open(&path) {
-        Err(why) => panic!("couldn't open {}: {}", display, why.description()),
+        Err(why) => panic!("couldn't open {}: {}", display, why),
         Ok(file) => file,
     };
 
