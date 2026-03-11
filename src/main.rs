@@ -1,4 +1,3 @@
-// extern crate clap; // No longer needed in 2018 edition for most cases, but specifically we use the new API
 extern crate exitcode;
 
 use clap::{Arg, Command as ClapCommand};
@@ -53,13 +52,16 @@ fn main() {
         "pod" => {
             match app {
                 None => {
-                    Command::new("kubectl")
+                    let status = Command::new("kubectl")
                     .arg("get")
                     .arg("pods")
                     .arg("-n")
                     .arg(&namespace)
                     .status()
                     .expect("failed to execute process");
+                    if !status.success() {
+                        std::process::exit(status.code().unwrap_or(1));
+                    }
                 },
                 Some(app_name) => {
                     let cmd = Command::new("kubectl")
@@ -83,6 +85,10 @@ fn main() {
                         stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
                     }
                     let output = child.wait_with_output().expect("Failed to read stdout");
+                    if output.stdout.is_empty() {
+                        println!("No pods found matching '{}' in namespace '{}'", app_name, namespace);
+                        std::process::exit(1);
+                    }
                     print!("{}", String::from_utf8_lossy(&output.stdout));
                 }
             }
@@ -90,13 +96,16 @@ fn main() {
         "svc" => {
             match app {
                 None => {
-                    Command::new("kubectl")
+                    let status = Command::new("kubectl")
                     .arg("get")
                     .arg("svc")
                     .arg("-n")
                     .arg(&namespace)
                     .status()
                     .expect("failed to execute process");
+                    if !status.success() {
+                        std::process::exit(status.code().unwrap_or(1));
+                    }
                 },
                 Some(app_name) => {
                     let cmd = Command::new("kubectl")
@@ -120,6 +129,10 @@ fn main() {
                         stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
                     }
                     let output = child.wait_with_output().expect("Failed to read stdout");
+                    if output.stdout.is_empty() {
+                        println!("No services found matching '{}' in namespace '{}'", app_name, namespace);
+                        std::process::exit(1);
+                    }
                     print!("{}", String::from_utf8_lossy(&output.stdout));
 
                 }
@@ -128,13 +141,16 @@ fn main() {
         "deploy" => {
             match app {
                 None => {
-                    Command::new("kubectl")
+                    let status = Command::new("kubectl")
                     .arg("get")
                     .arg("deployment")
                     .arg("-n")
                     .arg(&namespace)
                     .status()
                     .expect("failed to execute process");
+                    if !status.success() {
+                        std::process::exit(status.code().unwrap_or(1));
+                    }
                 },
                 Some(app_name) => {
                     let cmd = Command::new("kubectl")
@@ -158,6 +174,10 @@ fn main() {
                         stdin.write_all(&cmd.stdout).expect("Failed to write to stdin");
                     }
                     let output = child.wait_with_output().expect("Failed to read stdout");
+                    if output.stdout.is_empty() {
+                        println!("No deployments found matching '{}' in namespace '{}'", app_name, namespace);
+                        std::process::exit(1);
+                    }
                     print!("{}", String::from_utf8_lossy(&output.stdout));
 
                 }
@@ -208,6 +228,7 @@ fn main() {
                             .expect("Failed show logs");
                     }else {
                         println!("Invalid app name or namespace?");
+                        std::process::exit(1);
                     }
                     }
             }
@@ -260,6 +281,7 @@ fn main() {
                             .expect("Failed exec to pod");
                     }else {
                         println!("Invalid app name or namespace?");
+                        std::process::exit(1);
                     }
                     
                 }
@@ -320,6 +342,7 @@ fn main() {
                         }
                     }else {
                         println!("Invalid app name or namespace?");
+                        std::process::exit(1);
                     }
                 }
             }
